@@ -1,6 +1,7 @@
 import requests
 from pybliometrics.scopus import ScopusSearch
 import os
+import re
 
 # 需設定 SERPAPI_KEY 與 SCOPUS_API_KEY 至 .env 或系統環境變數
 
@@ -28,7 +29,14 @@ def fetch_google_scholar(keyword, max_results=30):
             for article in data.get("organic_results", []):
                 title = article.get("title", "")
                 link = article.get("link", "")
-                year = article.get("publication_info", {}).get("year", "")
+                # 從 publication_info 的 summary 中提取年份
+                publication_info = article.get("publication_info", {})
+                year = ""
+                if "summary" in publication_info:
+                    # 嘗試從摘要中提取年份（通常是四位數字）
+                    year_match = re.search(r'\b(19|20)\d{2}\b', publication_info["summary"])
+                    if year_match:
+                        year = year_match.group(0)
                 
                 if title:  # 只添加有標題的結果
                     results.append({
