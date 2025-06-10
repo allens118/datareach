@@ -1,0 +1,6 @@
+requests
+pybliometrics
+python-dotenv
+pandas
+matplotlib
+flask 
